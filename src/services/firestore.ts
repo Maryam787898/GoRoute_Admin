@@ -67,16 +67,20 @@ export async function getUserRole(uid: string): Promise<string | null> {
 
 /**
  * Check whether an admin account already exists in Firestore.
- * Used to enforce the single-admin rule.
+ * Pass the current user's uid to exclude them from the check
+ * (used after registration to verify no OTHER admin exists).
  */
-export async function adminExists(): Promise<boolean> {
+export async function adminExists(excludeUid?: string): Promise<boolean> {
   const q = query(
     collection(db, 'users'),
     where('role', '==', 'admin'),
-    limit(1)
+    limit(2)
   );
   const snap = await getDocs(q);
-  return !snap.empty;
+  if (snap.empty) return false;
+  if (!excludeUid) return true;
+  // Return true only if there is an admin OTHER than the current user
+  return snap.docs.some((d) => d.id !== excludeUid);
 }
 
 // ── Real-time listeners ───────────────────────────────────────────────────────

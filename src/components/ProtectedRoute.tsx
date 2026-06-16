@@ -6,6 +6,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { currentUser, loading, isAdmin } = useAuth();
   const location = useLocation();
 
+  // Still resolving auth state — show spinner only for protected routes
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">

@@ -31,12 +31,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (user) {
         // Listen to Firestore role in real-time
-        roleUnsub = onSnapshot(doc(db, 'users', user.uid), (snap) => {
-          const role = snap.exists() ? (snap.data()?.role ?? null) : null;
-          setUserRole(role);
-          setLoading(false);
-        });
+        roleUnsub = onSnapshot(
+          doc(db, 'users', user.uid),
+          (snap) => {
+            const role = snap.exists() ? (snap.data()?.role ?? null) : null;
+            setUserRole(role);
+            setLoading(false);
+          },
+          (_err) => {
+            // Firestore read failed (e.g. rules) — still unblock the UI
+            setUserRole(null);
+            setLoading(false);
+          }
+        );
       } else {
+        // No user logged in — immediately unblock
         setUserRole(null);
         setLoading(false);
       }

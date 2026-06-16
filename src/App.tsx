@@ -41,7 +41,7 @@ function App() {
             <Route path="bus-alerts" element={<BusAlerts />} />
           </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>
